@@ -58,7 +58,7 @@ Returns 0 and sets errno to EINVAL if the nth index does not exist.
 ```c
     int val = value_at(list, 2);
 ```
-#### Get the nth value of a list.
+#### Get the nth node of a list.
 Returns a NULL pointer and sets errno to EINVAL if the nth index does not exist.
 ```c
     struct Node* nth = get_nth_node(list, 2);
