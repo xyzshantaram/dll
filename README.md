@@ -1,2 +1,63 @@
 # dll
 C implementation of a doubly-linked list datatype.
+
+## Usage:
+
+#### Add to your program:
+```c
+#include "dll.h"
+```
+
+#### Create a new list:
+The append() call pulls double duty for appending and creating new lists.
+```c
+    struct Node* list = append(NULL, 0);
+```
+#### Append a value to a list
+append() returns NULL in case of an allocation failure and the original pointer it was passed otherwise. If NULL was passed in,
+it will return a new list node.
+```c
+    list = append(list, 1);
+```
+#### Prepend a value to the list (prepend() returns a pointer to the newly prepended node.)
+```c
+    list = prepend(list, 2);
+```
+#### Populate a list with values.
+If NULL is passed as the first argument, it returns a new list with the given values. The second argument is the number of values to append.
+```c
+    populate_list(list, 3, 1, 2, 3);
+```
+#### Get a list filled with zeroes.
+If you pass in a valid Node pointer, it appends the specified number of zeroes to the end of that list.
+```c
+    struct Node* list2 = blank_list(NULL, 3);
+#### Get the length of a list
+Returns zero if NULL is passed in.
+```c
+    printf("Length of created list is %d\n", length_of(list));
+```
+#### Set the value stored in a node
+Set the value stored in the node at the given (absolute, zero-indexed) index to the given value. If the index does not exist in the list, errno is set to EINVAL.
+```c
+    put_at(list2, 2, 69);
+```
+#### Get the last node of a list.
+```c
+    struct Node* last = get_last_node(list);
+```
+#### Get the nth value of a list. Returns a NULL pointer and sets errno to EINVAL if the nth index does not exist.
+```c
+    int val = value_at(list, 2);
+````
+#### Pretty-print the list
+Prints out the list with its name in the following format:    
+"listname: node0 -> node1 -> node2 ... nodeN -> NULL"
+```c
+    PRINT(list);
+```
+#### Destroy the list
+Frees every node in the list.
+```c
+    destroy_list(list);
+```
