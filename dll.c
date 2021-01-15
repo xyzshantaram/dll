@@ -1,153 +1,201 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
 #include "dll.h"
 
-struct Node* append(struct Node *list, int value) {
-    struct Node* first = list;
-    list = get_last_node(list);
+struct DBLL_Node *dbll_append(struct DBLL_Node *list, DBLL_TYPE value) {
+    list = dbll_get_last_node(list);
 
-    struct Node* new = malloc(sizeof(struct Node));
-    if (new == NULL) {
-    	return NULL;
-    }
+    struct DBLL_Node *
+    new = malloc(sizeof(*new));
+    if (!new) return NULL;
 
     new->next = NULL;
-    new->prev = NULL;
     new->value = value;
 
     if (list == NULL) {
-    	return new;
+        new->prev = NULL;
     }
-
     else {
         new->prev = list;
-    	list->next = new;
-    }
-    return first;
-}
-
-struct Node* prepend(struct Node* list, int value) {
-    list = get_first_node(list);
-    struct Node *new;
-    if (list == NULL) {
-        new = append(NULL, 0);
-    }
-    else {
-        new = malloc(sizeof(*new));
-        if (new == NULL) {
-            return NULL;
-        }
-        list->prev = new;
-        new->next = list;
-        new->value = value;
-        new->prev = NULL;
+        list->next = new;
     }
 
     return new;
 }
 
-struct Node *populate_list(struct Node* list, int count, ...) {
-    va_list ap;
-    va_start(ap, count);
+struct DBLL_Node *dbll_prepend(struct DBLL_Node *list, DBLL_TYPE value) {
+    list = dbll_get_first_node(list);
 
-    struct Node* first;
-    for (int i = 0; i < count; i++) {
-        int value = va_arg(ap, int);
-        list = append(list, value);
-        if (list == NULL) {
-            destroy_list(first);
-            return NULL;
-        }
-        if (i == 0) {
-            first = list;
-        }
+    struct DBLL_Node *new = malloc(sizeof(*new));
+    if (!new) return NULL;
+
+    new->prev = NULL;
+    new->value = value;
+
+    if (list == NULL) {
+        new->next = NULL;
+    }
+    else {
+        new->next = list;
+        list->prev = new;
     }
 
+    return new;
+}
+
+
+size_t dbll_get_length(struct DBLL_Node *node) {
+    node = dbll_get_first_node(node);
+    size_t idx = 0;
+    while (node) {
+        idx++;
+        if (!node->next) break;
+        node = node->next;
+    }
+    return idx;
+}
+
+int dbll_insert_node(struct DBLL_Node *dest, DBLL_TYPE elem, int before) {
+    if (!dest) {
+        return 1;
+    }
+
+    struct DBLL_Node *new = malloc(sizeof(*new));
+    if (!new) {
+        return 2;
+    }
+    new->value = elem;
+    if (!before) {
+        new->next = dest->next;
+        new->prev = dest;
+        dest->next = new;
+    }
+    else {
+        printf("inserting before\n");
+        new->next = dest;
+        new->prev = dest->prev;
+        if (new->prev) new->prev->next = new;
+        dest->prev = new;
+    }
+    return 0;
+}
+
+struct DBLL_Node *dbll_get_last_node(struct DBLL_Node *node) {
+    while (node) {
+        if (!node->next) break;
+        node = node->next;
+    }
+    return node;
+}
+
+struct DBLL_Node *dbll_get_first_node(struct DBLL_Node *node) {
+    while (node) {
+        if (!node->prev) break;
+        node = node->prev;
+    }
+    return node;
+}
+
+struct DBLL_Node *dbll_get_nth_node(struct DBLL_Node *node, size_t n) {
+    node = dbll_get_first_node(node);
+    for (int i = 0; i < n; i++) {
+        if (!node) break;
+        if (!node->next) break;
+        node = node->next;
+    }
+    return node;
+}
+
+int dbll_put_at(struct DBLL_Node *node, size_t n, DBLL_TYPE value) {
+    node = dbll_get_nth_node(node, n);
+    if (!node) {
+        return -1;
+    }
+
+    node->value = value;
+    printf("%p %p\n", node, node->value);
+    return 0;
+}
+
+DBLL_TYPE dbll_value_at(struct DBLL_Node *node, size_t n) {
+    node = dbll_get_nth_node(node, n);
+    if (!node) {
+        errno = EINVAL;
+        #if DBLL_VOID == 1
+            return NULL;
+        #else
+            return -1;
+        #endif
+    }
+
+    return node->value;
+}
+
+struct DBLL_Node *dbll_append_blanks(struct DBLL_Node *node, DBLL_TYPE value, size_t count) {
+    struct DBLL_Node *first = node;
+    struct DBLL_Node *tmp;
+    for (size_t i = 0; i < count; i++) {
+        tmp = dbll_append(node, value);
+        if (!tmp) {
+            dbll_destroy_list(first);
+            return NULL;
+        }
+        else {
+            node = tmp;
+        }
+    }
     return first;
 }
 
-struct Node *blank_list(struct Node* list, int count) {
-    struct Node* first = list;
-    for (int i = 0; i < count; i++) {
-        list = append(list, 0);
-        if (list == NULL) {
-            destroy_list(first);
+struct DBLL_Node *dbll_append_values(struct DBLL_Node *node, DBLL_TYPE values[], size_t count) {
+    struct DBLL_Node *first = node;
+    struct DBLL_Node *tmp;
+    for (size_t i = 0; i < count; i++) {
+        tmp = dbll_append(node, values[i]);
+        if (!tmp) {
+            dbll_destroy_list(first);
             return NULL;
         }
-        if (i == 0) {
-            first = list;
+        else {
+            node = tmp;
         }
     }
     return first;
 }
 
-void destroy_list(struct Node *list) {
-    list = get_first_node(list);
-    struct Node* next = list;
-    while(next != NULL) {
+void dbll_print_list(const char *name, struct DBLL_Node *list) {
+    list = dbll_get_first_node(list);
+    printf("%s: ", name);
+    for (struct DBLL_Node* itm = list; itm; itm = itm->next) {
+        #if DBLL_VOID == 1
+        printf("%p -> ", itm->value);
+        #else
+        printf("%d -> ", itm->value);
+        #endif
+    }
+    printf("END\n");
+}
+
+void dbll_destroy_list(struct DBLL_Node *list) {
+    list = dbll_get_first_node(list);
+    struct DBLL_Node* next = list;
+    while (next != NULL) {
         list = next;
         next = next->next;
         free(list);
     }
 }
 
-size_t length_of(struct Node *list) {
-    list = get_first_node(list);
-	size_t count = 0;
-	while (list != NULL) {
-		list = list->next;
-		count++;
-	}
-	return count;
-}
-void put_at(struct Node* list, size_t index, int value) {
-    struct Node* node = get_nth_node(list, index);
-    if (node == NULL) return; // Don't forget to check errno!
-    else node->value = value;
-}
-
-int value_at(struct Node* list, size_t index) {
-    struct Node* node = get_nth_node(list, index);
-    if (node == NULL) return -1; // Don't forget to check errno!
-    else return node->value;
-}
-
-struct Node* get_nth_node(struct Node* list, size_t index) {
-    list = get_first_node(list);
-    if (list == NULL) {
-        return NULL;
+#if DBLL_VOID == 1
+void dbll_destroy_list_freecontents(struct DBLL_Node *list) {
+    list = dbll_get_first_node(list);
+    struct DBLL_Node* next = list;
+    while (next != NULL) {
+        list = next;
+        next = next->next;
+        if (list->value) free(list->value);
+        free(list);
     }
-
-    if (index > length_of(list) - 1) {
-        errno = EINVAL;
-        return NULL;
-    }
-
-    for (int i = 0; i < index; i++) {
-        list = list->next;
-    }
-    return list;
 }
-
-struct Node* get_last_node(struct Node* list) {
-    return get_nth_node(list, length_of(list) - 1);
-}
-
-struct Node* get_first_node(struct Node* list) {
-    if (list) {
-        while(list->prev != NULL) {
-            list = list->prev;
-        }
-        return list;
-    }
-    return NULL;
-}
-
-void print(char *name, struct Node *list) {
-	printf("%s: ", name);
-	while (list != NULL) {
-		printf("%d -> ", list->value);
-		list = list->next;
-	}
-	printf("NULL\n");
-}
-
-
+#endif

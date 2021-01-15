@@ -3,7 +3,7 @@
 int main() {
     errno = 0;
 
-    struct Node* list = append(NULL, 0);
+    struct DBLL_Node* list = append(NULL, 0);
     list = append(list, 1);
     list = prepend(list, 2);
     populate_list(list, 3, 1, 2, 3);
