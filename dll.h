@@ -121,7 +121,7 @@ DBLL_TYPE dbll_value_at(struct DBLL_Node *node, size_t n);
     @param node any node in the list
     @param value the value of each new element
     @param count the number of new elements to create
-    @return the node last appended or NULL on allocation failure
+    @return the original node if a valid pointer was passed in, a new list node if NULL was passed in, and NULL on allocation failure
 */
 struct DBLL_Node *dbll_append_blanks(struct DBLL_Node *node, DBLL_TYPE value, size_t count);
 
@@ -133,7 +133,7 @@ struct DBLL_Node *dbll_append_blanks(struct DBLL_Node *node, DBLL_TYPE value, si
     @param any node in the list
     @param values an array containing the elements to append
     @param count the number of new elements to create
-    @return the node last appended or NULL on allocation failure
+    @return the original node if a valid pointer was passed in, a new list node if NULL was passed in, and NULL on allocation failure
 */
 struct DBLL_Node *dbll_append_values(struct DBLL_Node *node, DBLL_TYPE values[], size_t count);
 

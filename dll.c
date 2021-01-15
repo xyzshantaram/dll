@@ -147,7 +147,8 @@ struct DBLL_Node *dbll_append_blanks(struct DBLL_Node *node, DBLL_TYPE value, si
             node = tmp;
         }
     }
-    return tmp;
+    if (!first) return tmp;
+    else return first;
 }
 
 struct DBLL_Node *dbll_append_values(struct DBLL_Node *node, DBLL_TYPE values[], size_t count) {
@@ -163,7 +164,8 @@ struct DBLL_Node *dbll_append_values(struct DBLL_Node *node, DBLL_TYPE values[],
             node = tmp;
         }
     }
-    return tmp;
+    if (!first) return tmp;
+    else return first;
 }
 
 void dbll_print_list(const char *name, struct DBLL_Node *list) {

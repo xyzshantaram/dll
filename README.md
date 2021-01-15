@@ -7,16 +7,27 @@ C implementation of a doubly-linked list datatype.
 ```c
 #include "dll.h"
 ```
-#### Create a new list
-The append() call pulls double duty for appending and creating new lists.
+Make sure to edit dll.h to set the values of DBLL_TYPE and DBLL_VOID as per your usage (void* vs int)    
+To use it as a linked list of void*s, set the following values:
 ```c
-    struct Node* list = append(NULL, 0);
+    #define DBLL_TYPE void*
+    #define DBLL_VOID 1
+```
+For a linked list of ints, set:
+```c
+    #define DBLL_TYPE int
+    #define DBLL_VOID 0
+```
+#### Create a new list
+The dbll_append() call pulls double duty for appending and creating new lists.
+```c
+    struct DBLL_Node* list = dbll_append(NULL, 0);
 ```
 #### Append a value to a list
-append() returns NULL in case of an allocation failure and the original pointer it was passed otherwise. If NULL was passed in,
+dbll_append() returns NULL in case of an allocation failure and the original pointer it was passed otherwise. If NULL was passed in,
 it will return a new list node.
 ```c
-    list = append(list, 1);
+    list = dbll_append(list, 1);
 ```
 #### Prepend a value to the list
 Returns a pointer to the newly prepended node, ie the new first node of the list.
