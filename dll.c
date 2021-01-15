@@ -6,8 +6,7 @@
 struct DBLL_Node *dbll_append(struct DBLL_Node *list, DBLL_TYPE value) {
     list = dbll_get_last_node(list);
 
-    struct DBLL_Node *
-    new = malloc(sizeof(*new));
+    struct DBLL_Node *new = malloc(sizeof(*new));
     if (!new) return NULL;
 
     new->next = NULL;
@@ -135,17 +134,20 @@ DBLL_TYPE dbll_value_at(struct DBLL_Node *node, size_t n) {
 struct DBLL_Node *dbll_append_blanks(struct DBLL_Node *node, DBLL_TYPE value, size_t count) {
     struct DBLL_Node *first = node;
     struct DBLL_Node *tmp;
+    printf("H\n");
     for (size_t i = 0; i < count; i++) {
+        printf("H2\n");
         tmp = dbll_append(node, value);
         if (!tmp) {
             dbll_destroy_list(first);
+            printf("F\n");
             return NULL;
         }
         else {
             node = tmp;
         }
     }
-    return first;
+    return tmp;
 }
 
 struct DBLL_Node *dbll_append_values(struct DBLL_Node *node, DBLL_TYPE values[], size_t count) {
@@ -161,7 +163,7 @@ struct DBLL_Node *dbll_append_values(struct DBLL_Node *node, DBLL_TYPE values[],
             node = tmp;
         }
     }
-    return first;
+    return tmp;
 }
 
 void dbll_print_list(const char *name, struct DBLL_Node *list) {
