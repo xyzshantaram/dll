@@ -58,7 +58,7 @@ Set the value stored in the node at the given (absolute, zero-indexed) index to 
 ```
 #### Insert a node before or after a given node
 dbll_insert_node() will return 2 on malloc failure, 1 if null was passed in, 0 on success.
-```
+```c
     int before = 0; // a boolean specifying whether to insert before or after the given element
     int elem = 55; // the element to insert
     int r = dbll_insert_node(list, elem, before);
