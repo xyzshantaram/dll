@@ -96,4 +96,8 @@ Frees every node in the list.
 ```c
     dbll_destroy_list(list);
 ```
+
+##### Notes
+- Please don't use this library to create circular linked lists, or any kind of list involving cycles - all the functions would just break down, since they assume a linear structure.
+
 Provided under the MIT License, (C) 2020 Siddharth Singh
