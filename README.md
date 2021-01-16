@@ -96,4 +96,4 @@ Frees every node in the list.
 ```c
     dbll_destroy_list(list);
 ```
-Provided under the MIT License, (C) 2020 Siddharth Singh
+Provided under the MIT License, (C) 2021 Siddharth Singh
