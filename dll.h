@@ -135,6 +135,34 @@ struct DBLL_Node *dbll_append_blanks(struct DBLL_Node *node, DBLL_TYPE value, si
     @param count the number of new elements to create
     @return the original node if a valid pointer was passed in, a new list if NULL was passed in, and NULL on allocation failure
 */
+
+int dbll_find(struct DBLL_Node *list, DBLL_TYPE value);
+
+/*
+    Searches if a node is present .
+    @param list a pointer to a list node
+    @param value the value to search for
+    @return 1 if the node is present in list, or the value of the node otherwise.
+*/
+
+struct DBLL_Node *dbll_middle(struct DBLL_Node *list);
+
+/*
+    Finds the middle node of a list.
+    @param list a pointer to a list node
+    @return the middle node of the list, or NULL if the list is empty.
+
+*/
+
+struct DBLL_Node *dbll_sort(struct DBLL_Node *list, int (*compare)(DBLL_TYPE, DBLL_TYPE));
+
+/*
+    Sorts the list.
+    @param list a pointer to a list node
+    @param compare a function pointer to a function that compares two values
+    @return the sorted list
+*/
+
 struct DBLL_Node *dbll_append_values(struct DBLL_Node *node, DBLL_TYPE values[], size_t count);
 
 /*

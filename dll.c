@@ -168,6 +168,53 @@ struct DBLL_Node *dbll_append_values(struct DBLL_Node *node, DBLL_TYPE values[],
     else return first;
 }
 
+int dbll_find(struct DBLL_Node *list, DBLL_TYPE value) {
+
+    while (list) {
+        if (list->value == value) return 1;
+        list = list->next;
+    }
+    return 0;
+}
+
+struct DBLL_Node *dbll_middle(struct DBLL_Node *list) {
+    if(!list) return NULL;
+    struct DBLL_Node *slow = list;
+    struct DBLL_Node *fast = list->next;
+    while (fast && fast->next) {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+    return slow;
+}
+struct DBLL_Node *dbll_merge(struct DBLL_Node *a, struct DBLL_Node *b , int (*compare)(DBLL_TYPE, DBLL_TYPE)) {
+    if (!a) return b;
+    if (!b) return a;
+    struct DBLL_Node *temp;
+    if(compare(a->value, b->value) < 0) {
+        temp = a;
+        temp->next = dbll_merge(a->next, b, compare);
+    }
+    else {
+        temp = b;
+        temp->next = dbll_merge(a, b->next, compare);
+    }
+    temp->next->prev = temp;
+    temp->prev = NULL;
+    return temp;
+
+}
+struct DBLL_Node *dbll_sort(struct DBLL_Node *list, int (*compare)(DBLL_TYPE, DBLL_TYPE)) {
+    if(!list || !list->next) return list;
+    struct DBLL_Node *middle = dbll_middle(list);
+    struct DBLL_Node *left = list;
+    struct DBLL_Node *right = middle->next;
+    middle->next = NULL;
+    left = dbll_sort(left, compare);
+    right = dbll_sort(right, compare);
+    return dbll_merge(left, right, compare);
+}
+
 void dbll_print_list(const char *name, struct DBLL_Node *list) {
     list = dbll_get_first_node(list);
     printf("%s: ", name);
